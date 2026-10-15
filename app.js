@@ -1,5 +1,5 @@
 // ==============================================================================
-// BRAHMA KUMARIS SPIRITUAL PORTAL & DIVINE ART GALLERY ENGINE
+// BRAHMA KUMARIS MOBILE-FIRST SPIRITUAL PORTAL ENGINE
 // ==============================================================================
 
 // 1. Supabase Initialization
@@ -16,7 +16,6 @@ const state = {
   currentExhibit: null,
   exhibitLang: 'en', // 'en' or 'hi'
   isSpeaking: false,
-  speechSynthUtterance: null,
   audioElement: null,
   exhibitions: [
     {
@@ -137,9 +136,9 @@ const state = {
     { id: 4, title: 'Celestial Nature & Purity', category: 'Nature & Divine', image_url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80', description: 'Pure vibrations healing human hearts and nature.' }
   ],
   events: [
-    { id: 1, title: '7-Day Foundation Course in Raja Yoga Meditation', date_str: 'Every Monday - Sunday', time_str: '7:00 AM - 8:30 AM', venue: 'Online & Local BK Centers', description: 'Learn the basics of soul consciousness, God connection, and mind mastery. Free of charge.' },
-    { id: 2, title: 'World Peace Meditation Hour', date_str: 'Every Third Sunday', time_str: '6:30 PM - 7:30 PM', venue: 'Global Centers & Live Stream', description: 'Join millions across 140 countries radiating pure vibrations of peace and healing to the world.' },
-    { id: 3, title: 'Stress-Free Living Spiritual Retreat', date_str: 'Upcoming Weekend', time_str: 'Full Day (9 AM - 5 PM)', venue: 'Peace Village Spiritual Park', description: 'Holistic self-empowerment workshop with meditation sessions, sattvic meals, and spiritual classes.' }
+    { id: 1, title: '7-Day Foundation Course in Raja Yoga', date_str: 'Daily & Online', time_str: '7:00 AM - 8:30 AM', venue: 'All Centers & Zoom', description: 'Understand soul, Supreme Soul Shiva, and master positive thinking.' },
+    { id: 2, title: 'World Peace Meditation Hour', date_str: 'Every 3rd Sunday', time_str: '6:30 PM - 7:30 PM', venue: 'Global Centers & Live Stream', description: 'Radiating peaceful vibrations to heal humanity and nature.' },
+    { id: 3, title: 'Stress-Free Living Weekend Retreat', date_str: 'Upcoming Weekend', time_str: '10:00 AM - 4:00 PM', venue: 'Mount Abu / Local Retreat Centers', description: 'Recharge your inner battery with guided meditations and quiet time.' }
   ],
   settings: {
     site_title: 'Brahma Kumaris',
@@ -162,11 +161,9 @@ window.handleNav = function(e, path) {
 };
 
 function navigateTo(path) {
-  // Normalize path
   if (!path || path === '/' || path === '') path = '/home';
   if (!path.startsWith('/')) path = '/' + path;
 
-  // Push state to browser URL bar
   window.history.pushState({ path: path }, '', path);
   applyRoute(path);
 }
@@ -174,18 +171,27 @@ function navigateTo(path) {
 function applyRoute(path) {
   state.currentRoute = path;
 
-  // Stop any active audio speech when switching pages
-  stopAudioGuide();
-
   // Hide all pages
   document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
 
-  // Highlight active nav links
+  // Update desktop nav highlights
   document.querySelectorAll('.nav-link').forEach(link => {
     if (link.getAttribute('data-path') === path) {
-      link.className = 'nav-link px-3.5 py-2 rounded-xl text-sm font-bold bg-amber-100 text-amber-900 shadow-xs';
+      link.className = 'nav-link px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-100 text-amber-900';
     } else {
-      link.className = 'nav-link px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-amber-800 hover:bg-amber-50';
+      link.className = 'nav-link px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-amber-50';
+    }
+  });
+
+  // Update mobile bottom dock active states
+  document.querySelectorAll('.mobile-tab').forEach(tab => {
+    const tabPath = tab.getAttribute('data-path');
+    if (tabPath === path) {
+      tab.classList.remove('text-slate-500');
+      tab.classList.add('text-amber-800', 'font-bold');
+    } else {
+      tab.classList.remove('text-amber-800', 'font-bold');
+      tab.classList.add('text-slate-500');
     }
   });
 
@@ -223,7 +229,7 @@ function applyRoute(path) {
 }
 
 // Browser Back / Forward handler
-window.addEventListener('popstate', (e) => {
+window.addEventListener('popstate', () => {
   const path = window.location.pathname || '/home';
   applyRoute(path);
 });
@@ -232,28 +238,13 @@ window.addEventListener('popstate', (e) => {
 // 4. Initial Loading & Data Fetching from Supabase
 // ==============================================================================
 document.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('footerYear').textContent = new Date().getFullYear();
-
-  // Initialize Mobile Menu
-  const mobileBtn = document.getElementById('mobileMenuBtn');
-  const mobileMenu = document.getElementById('mobileMenu');
-  if (mobileBtn && mobileMenu) {
-    mobileBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
-  }
-
-  // Initial sync with Supabase
   await fetchSupabaseData();
-
-  // Render initial components
   renderExhibitions();
   renderArtGallery();
   renderEvents();
   applySettingsToUI();
   setupForms();
 
-  // Handle initial route on first load
   const initialPath = window.location.pathname || '/home';
   applyRoute(initialPath);
 });
@@ -262,7 +253,6 @@ async function fetchSupabaseData() {
   if (!supabaseClient) return;
 
   try {
-    // 1. Fetch site settings
     const { data: setts } = await supabaseClient.from('site_settings').select('*');
     if (setts && setts.length > 0) {
       setts.forEach(s => {
@@ -272,21 +262,18 @@ async function fetchSupabaseData() {
       applySettingsToUI();
     }
 
-    // 2. Fetch exhibitions (10 exhibits)
     const { data: exhibs } = await supabaseClient.from('exhibitions').select('*').order('order_num', { ascending: true });
     if (exhibs && exhibs.length > 0) {
       state.exhibitions = exhibs;
       renderExhibitions();
     }
 
-    // 3. Fetch gallery items
     const { data: gallery } = await supabaseClient.from('gallery_items').select('*').order('id', { ascending: false });
     if (gallery && gallery.length > 0) {
       state.galleryItems = gallery;
       renderArtGallery();
     }
 
-    // 4. Fetch events
     const { data: evts } = await supabaseClient.from('events').select('*').order('id', { ascending: false });
     if (evts && evts.length > 0) {
       state.events = evts;
@@ -303,7 +290,6 @@ function applySettingsToUI() {
     document.getElementById('navSiteTitle').textContent = s.site_title;
     document.title = s.site_title + ' | Divine Art Gallery';
   }
-  if (s.site_tagline) document.getElementById('navSiteTagline').textContent = s.site_tagline;
   if (s.youtube_url) document.getElementById('linkYouTube').href = s.youtube_url;
   if (s.instagram_url) document.getElementById('linkInstagram').href = s.instagram_url;
   if (s.facebook_url) document.getElementById('linkFacebook').href = s.facebook_url;
@@ -314,7 +300,7 @@ function applySettingsToUI() {
 }
 
 // ==============================================================================
-// 5. 10 Sacred Exhibition Panels & Audio Guide Logic (The Focus Feature)
+// 5. 10 Sacred Exhibition Panels & Mobile Audio Guide (The Focus Feature)
 // ==============================================================================
 function renderExhibitions() {
   const grid = document.getElementById('exhibitionsGrid');
@@ -323,42 +309,31 @@ function renderExhibitions() {
 
   state.exhibitions.forEach((exhibit, index) => {
     const card = document.createElement('div');
-    card.className = 'group bg-white rounded-3xl border border-amber-200/80 overflow-hidden shadow-xs hover:shadow-xl hover:border-amber-400 transition-all duration-300 flex flex-col justify-between cursor-pointer';
-    card.onclick = () => openExhibitModal(exhibit);
+    card.className = 'bg-white rounded-3xl border border-amber-200/80 overflow-hidden shadow-xs hover:shadow-md transition active:scale-[0.99]';
 
     card.innerHTML = `
-      <div>
-        <div class="relative w-full h-52 overflow-hidden bg-slate-900">
-          <img src="${exhibit.image_url}" alt="${exhibit.title_en}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20"></div>
-          <span class="absolute top-3 left-3 text-2xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-500 text-white shadow-md">
-            Exhibit ${exhibit.order_num || (index + 1)}
-          </span>
-          <span class="absolute bottom-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-white/90 text-amber-900 shadow-sm flex items-center gap-1 backdrop-blur-xs">
-            <i data-lucide="volume-2" class="w-3.5 h-3.5 text-red-600"></i> Audio Guide
-          </span>
-        </div>
-
-        <div class="p-6">
-          <h3 class="font-bold text-base text-slate-900 group-hover:text-amber-800 transition line-clamp-1 mb-1">
-            ${exhibit.title_en}
-          </h3>
-          <p class="text-xs font-semibold text-amber-700 font-spiritual line-clamp-1 mb-3">
-            ${exhibit.title_hi}
-          </p>
-          <p class="text-xs text-slate-500 leading-relaxed line-clamp-3">
-            ${exhibit.desc_en}
-          </p>
+      <div class="relative w-full h-48 sm:h-56 overflow-hidden bg-slate-900 cursor-pointer" onclick="openExhibitModalByIndex(${index})">
+        <img src="${exhibit.image_url}" alt="${exhibit.title_en}" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20"></div>
+        <span class="absolute top-3 left-3 text-2xs font-extrabold uppercase px-2.5 py-1 rounded-full bg-amber-500 text-white shadow-md">
+          Exhibit ${exhibit.order_num || (index + 1)} of 10
+        </span>
+        <div class="absolute bottom-3 left-3 right-3 text-white">
+          <h3 class="font-extrabold text-base sm:text-lg leading-tight">${exhibit.title_en}</h3>
+          <p class="text-xs text-amber-200 font-medium mt-0.5">${exhibit.title_hi}</p>
         </div>
       </div>
 
-      <div class="px-6 pb-6 pt-2 border-t border-slate-100 flex items-center justify-between">
-        <span class="text-xs font-bold text-amber-700 flex items-center gap-1 group-hover:translate-x-1 transition">
-          View & Listen Guide &rarr;
-        </span>
-        <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition">
-          <i data-lucide="headphones" class="w-4 h-4"></i>
-        </div>
+      <div class="p-4 sm:p-5 flex items-center justify-between gap-3">
+        <p class="text-xs text-slate-500 line-clamp-2 flex-1 cursor-pointer" onclick="openExhibitModalByIndex(${index})">
+          ${exhibit.desc_en}
+        </p>
+
+        <!-- Direct 1-Tap Audio Play Button on Card (Perfect for mobile users!) -->
+        <button onclick="quickPlayExhibitAudio(event, ${index})" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs shadow-md shadow-red-600/20 flex items-center gap-1.5 shrink-0 active:scale-95 transition">
+          <i data-lucide="volume-2" class="w-4 h-4"></i>
+          <span>Listen</span>
+        </button>
       </div>
     `;
 
@@ -368,13 +343,23 @@ function renderExhibitions() {
   if (window.lucide) window.lucide.createIcons();
 }
 
+window.openExhibitModalByIndex = function(index) {
+  openExhibitModal(state.exhibitions[index]);
+};
+
+window.quickPlayExhibitAudio = function(e, index) {
+  if (e) e.stopPropagation();
+  state.currentExhibit = state.exhibitions[index];
+  playAudioGuide();
+};
+
 window.openExhibitModal = function(exhibit) {
   state.currentExhibit = exhibit;
   state.exhibitLang = 'en';
 
   const modal = document.getElementById('exhibitModal');
   document.getElementById('modalImg').src = exhibit.image_url;
-  document.getElementById('modalOrderTag').textContent = `Sacred Exhibition ${exhibit.order_num || 1} of 10`;
+  document.getElementById('modalOrderTag').textContent = `Exhibit ${exhibit.order_num || 1} of 10`;
 
   updateExhibitModalLanguage();
   modal.classList.remove('hidden');
@@ -382,27 +367,36 @@ window.openExhibitModal = function(exhibit) {
 };
 
 window.closeExhibitModal = function() {
-  stopAudioGuide();
   document.getElementById('exhibitModal').classList.add('hidden');
   document.body.style.overflow = '';
 };
 
+window.reopenCurrentExhibitModal = function() {
+  if (state.currentExhibit) {
+    openExhibitModal(state.currentExhibit);
+  }
+};
+
 window.switchExhibitLang = function(lang) {
-  stopAudioGuide();
   state.exhibitLang = lang;
 
   const btnEn = document.getElementById('langBtnEn');
   const btnHi = document.getElementById('langBtnHi');
 
   if (lang === 'en') {
-    btnEn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-amber-600 text-white shadow-xs';
-    btnHi.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition hover:text-slate-900';
+    btnEn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white';
+    btnHi.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900';
   } else {
-    btnHi.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-amber-600 text-white shadow-xs';
-    btnEn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition hover:text-slate-900';
+    btnHi.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white';
+    btnEn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900';
   }
 
   updateExhibitModalLanguage();
+
+  // If currently speaking, restart in new language
+  if (state.isSpeaking) {
+    playAudioGuide();
+  }
 };
 
 function updateExhibitModalLanguage() {
@@ -456,13 +450,12 @@ function playAudioGuide() {
 
   // Option B: Native Browser Web Speech Synthesis (Speaks in Hindi or English)
   if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel(); // Reset any previous speech
+    window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(textToRead);
-    utterance.rate = 0.9; // Calm, meditative pace
+    utterance.rate = 0.9;
     utterance.pitch = 1.0;
 
-    // Pick appropriate voice
     const voices = window.speechSynthesis.getVoices();
     if (state.exhibitLang === 'hi') {
       utterance.lang = 'hi-IN';
@@ -487,14 +480,13 @@ function playAudioGuide() {
       stopAudioGuide();
     };
 
-    state.speechSynthUtterance = utterance;
     window.speechSynthesis.speak(utterance);
   } else {
     alert('Audio synthesis is not supported on this browser.');
   }
 }
 
-function stopAudioGuide() {
+window.stopAudioGuide = function() {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
   }
@@ -504,25 +496,39 @@ function stopAudioGuide() {
   }
   state.isSpeaking = false;
   updateAudioUI(false);
-}
+};
 
 function updateAudioUI(isPlaying) {
   const listenBtn = document.getElementById('listenBtn');
   const listenText = document.getElementById('listenText');
-  const listenIcon = document.getElementById('listenIcon');
-  const statusElem = document.getElementById('audioPlayingStatus');
+  const miniPlayer = document.getElementById('mobileMiniPlayer');
+  const miniImg = document.getElementById('miniPlayerImg');
+  const miniTitle = document.getElementById('miniPlayerTitle');
+  const miniPlayIcon = document.getElementById('miniPlayIcon');
 
   if (isPlaying) {
-    listenText.textContent = 'Pause Audio Guide';
-    listenBtn.className = 'px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs shadow-md flex items-center gap-2 transition';
-    if (statusElem) statusElem.classList.remove('hidden');
-    if (statusElem) statusElem.classList.add('flex');
+    if (listenText) listenText.textContent = 'Pause Audio Guide';
+    if (listenBtn) listenBtn.className = 'flex-1 py-2.5 px-3 rounded-xl bg-slate-900 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5';
+    
+    // Show Spotify-like floating mini-player on mobile
+    if (miniPlayer && state.currentExhibit) {
+      miniImg.src = state.currentExhibit.image_url;
+      miniTitle.textContent = state.exhibitLang === 'hi' ? state.currentExhibit.title_hi : state.currentExhibit.title_en;
+      miniPlayer.classList.remove('hidden');
+      miniPlayer.classList.add('flex');
+      if (miniPlayIcon) miniPlayIcon.setAttribute('data-lucide', 'pause');
+    }
   } else {
-    listenText.textContent = 'Listen Audio Guide';
-    listenBtn.className = 'px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs shadow-md shadow-red-600/25 flex items-center gap-2 transition';
-    if (statusElem) statusElem.classList.add('hidden');
-    if (statusElem) statusElem.classList.remove('flex');
+    if (listenText) listenText.textContent = 'Listen Audio Guide';
+    if (listenBtn) listenBtn.className = 'flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5';
+    
+    if (miniPlayer) {
+      miniPlayer.classList.add('hidden');
+      miniPlayer.classList.remove('flex');
+    }
   }
+
+  if (window.lucide) window.lucide.createIcons();
 }
 
 // ==============================================================================
@@ -535,17 +541,17 @@ function renderArtGallery() {
 
   state.galleryItems.forEach(item => {
     const card = document.createElement('div');
-    card.className = 'bg-white rounded-2xl border border-amber-200/80 overflow-hidden shadow-xs hover:shadow-md transition';
+    card.className = 'bg-white rounded-2xl border border-amber-200/80 overflow-hidden shadow-xs';
 
     card.innerHTML = `
-      <div class="h-48 overflow-hidden bg-slate-900">
-        <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover hover:scale-105 transition duration-300">
+      <div class="h-44 overflow-hidden bg-slate-900">
+        <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover">
       </div>
-      <div class="p-4">
+      <div class="p-3.5">
         <span class="text-2xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
           ${item.category || 'Spiritual Art'}
         </span>
-        <h4 class="font-bold text-sm text-slate-900 mt-2">${item.title}</h4>
+        <h4 class="font-bold text-sm text-slate-900 mt-1.5">${item.title}</h4>
         <p class="text-xs text-slate-500 mt-1">${item.description || ''}</p>
       </div>
     `;
@@ -560,23 +566,18 @@ function renderEvents() {
 
   state.events.forEach(ev => {
     const card = document.createElement('div');
-    card.className = 'p-6 bg-white rounded-2xl border border-amber-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition';
+    card.className = 'p-4 bg-white rounded-2xl border border-amber-200/80 shadow-xs space-y-2';
 
     card.innerHTML = `
-      <div>
-        <div class="flex items-center gap-2 mb-1.5">
-          <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Free Admission</span>
-          <span class="text-xs text-slate-400 flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${ev.time_str || ''}</span>
-        </div>
-        <h3 class="font-bold text-lg text-slate-900">${ev.title}</h3>
-        <p class="text-xs text-amber-800 font-semibold mt-1 flex items-center gap-1.5">
-          <i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${ev.date_str} &bull; <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> ${ev.venue}
-        </p>
-        <p class="text-xs text-slate-500 mt-2 max-w-xl leading-relaxed">${ev.description || ''}</p>
+      <div class="flex items-center justify-between">
+        <span class="text-2xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Free Admission</span>
+        <span class="text-2xs text-slate-400 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${ev.time_str || ''}</span>
       </div>
-      <button onclick="handleNav(event, '/events')" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm self-start md:self-center transition">
-        Register Free
-      </button>
+      <h3 class="font-bold text-sm sm:text-base text-slate-900">${ev.title}</h3>
+      <p class="text-xs text-amber-800 font-semibold flex items-center gap-1">
+        <i data-lucide="map-pin" class="w-3 h-3"></i> ${ev.venue} &bull; ${ev.date_str}
+      </p>
+      <p class="text-xs text-slate-500 leading-relaxed">${ev.description || ''}</p>
     `;
     container.appendChild(card);
   });
@@ -588,7 +589,6 @@ function renderEvents() {
 // 7. Form Handlers (Save Responses to Supabase PostgreSQL)
 // ==============================================================================
 function setupForms() {
-  // Course Registration / Inquiry Form
   const evForm = document.getElementById('eventInquiryForm');
   if (evForm) {
     evForm.addEventListener('submit', async (e) => {
@@ -600,29 +600,26 @@ function setupForms() {
       const payload = {
         name: document.getElementById('evName').value.trim(),
         phone: document.getElementById('evPhone').value.trim(),
-        email: document.getElementById('evEmail').value.trim() || null,
         topic: document.getElementById('evTopic').value,
-        message: document.getElementById('evMessage').value.trim() || 'Interested in attending.'
+        message: document.getElementById('evMessage').value.trim() || 'Mobile enrollment.'
       };
 
       try {
         if (supabaseClient) {
-          const { error } = await supabaseClient.from('responses').insert([payload]);
-          if (error) console.warn('Supabase insert note:', error.message);
+          await supabaseClient.from('responses').insert([payload]);
         }
-        alert('🙏 Om Shanti! Your inquiry has been durably saved in our database. Our center will contact you.');
+        alert('🙏 Om Shanti! Your registration has been saved. We will contact you on WhatsApp.');
         evForm.reset();
       } catch (err) {
-        alert('🙏 Inquiry recorded!');
+        alert('🙏 Registration recorded!');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Submit to Center</span>`;
+        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Submit Registration to Center</span>`;
         if (window.lucide) window.lucide.createIcons();
       }
     });
   }
 
-  // Admin Login Form
   const loginForm = document.getElementById('adminLoginForm');
   if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
@@ -644,7 +641,7 @@ function setupForms() {
 }
 
 // ==============================================================================
-// 8. Admin CMS Control Panel (Full Edit Control of Website)
+// 8. Admin CMS Control Panel
 // ==============================================================================
 window.adminLogout = function() {
   state.isAdmin = false;
@@ -656,9 +653,9 @@ window.adminLogout = function() {
 window.switchAdminTab = function(tabName) {
   document.querySelectorAll('.admin-tab-btn').forEach(btn => {
     if (btn.getAttribute('data-tab') === tabName) {
-      btn.className = 'admin-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 text-white';
+      btn.className = 'admin-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-600 text-white shrink-0';
     } else {
-      btn.className = 'admin-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border';
+      btn.className = 'admin-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border shrink-0';
     }
   });
 
@@ -670,16 +667,12 @@ window.switchAdminTab = function(tabName) {
 };
 
 function loadAdminData() {
-  // Populate general settings
   const s = state.settings;
   document.getElementById('setSiteTitle').value = s.site_title || '';
-  document.getElementById('setSiteTagline').value = s.site_tagline || '';
   document.getElementById('setYoutube').value = s.youtube_url || '';
   document.getElementById('setInstagram').value = s.instagram_url || '';
-  document.getElementById('setFacebook').value = s.facebook_url || '';
   document.getElementById('setEmail').value = s.contact_email || '';
 
-  // Render Admin Exhibits Manager
   renderAdminExhibits();
   renderAdminGallery();
   renderAdminEvents();
@@ -687,15 +680,12 @@ function loadAdminData() {
 }
 
 function setupAdminForms() {
-  // Save Settings
   const settingsForm = document.getElementById('saveSettingsForm');
   settingsForm.onsubmit = async (e) => {
     e.preventDefault();
     state.settings.site_title = document.getElementById('setSiteTitle').value.trim();
-    state.settings.site_tagline = document.getElementById('setSiteTagline').value.trim();
     state.settings.youtube_url = document.getElementById('setYoutube').value.trim();
     state.settings.instagram_url = document.getElementById('setInstagram').value.trim();
-    state.settings.facebook_url = document.getElementById('setFacebook').value.trim();
     state.settings.contact_email = document.getElementById('setEmail').value.trim();
 
     if (supabaseClient) {
@@ -704,16 +694,15 @@ function setupAdminForms() {
       }
     }
     applySettingsToUI();
-    alert('Settings updated and synced to database!');
+    alert('Settings saved to database!');
   };
 
-  // Add Gallery Item
   const artForm = document.getElementById('addGalleryItemForm');
   artForm.onsubmit = async (e) => {
     e.preventDefault();
     const newItem = {
       title: document.getElementById('artTitle').value.trim(),
-      category: document.getElementById('artCategory').value.trim() || 'Spiritual Art',
+      category: 'Spiritual Art',
       image_url: document.getElementById('artImageUrl').value.trim(),
       description: document.getElementById('artDesc').value.trim()
     };
@@ -725,18 +714,16 @@ function setupAdminForms() {
     renderArtGallery();
     renderAdminGallery();
     artForm.reset();
-    alert('Artwork added to gallery!');
+    alert('Artwork added!');
   };
 
-  // Add Event
   const evForm = document.getElementById('addEventForm');
   evForm.onsubmit = async (e) => {
     e.preventDefault();
     const newEv = {
       title: document.getElementById('newEventTitle').value.trim(),
       date_str: document.getElementById('newEventDate').value.trim(),
-      venue: document.getElementById('newEventVenue').value.trim(),
-      description: document.getElementById('newEventDesc').value.trim()
+      venue: document.getElementById('newEventVenue').value.trim()
     };
 
     if (supabaseClient) {
@@ -746,7 +733,7 @@ function setupAdminForms() {
     renderEvents();
     renderAdminEvents();
     evForm.reset();
-    alert('Event added successfully!');
+    alert('Event added!');
   };
 }
 
@@ -756,35 +743,15 @@ function renderAdminExhibits() {
 
   state.exhibitions.forEach((ex, idx) => {
     const item = document.createElement('div');
-    item.className = 'p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-3';
+    item.className = 'p-3 rounded-xl border border-slate-200 bg-slate-50 space-y-2 text-xs';
 
     item.innerHTML = `
-      <div class="flex items-center justify-between font-bold text-sm">
-        <span>Exhibit ${ex.order_num || (idx + 1)}: ${ex.title_en}</span>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-        <div>
-          <label class="block font-semibold mb-1">Title (English)</label>
-          <input type="text" value="${ex.title_en}" onchange="updateExhibitField(${idx}, 'title_en', this.value)" class="w-full p-2 border rounded-lg bg-white">
-        </div>
-        <div>
-          <label class="block font-semibold mb-1">Title (Hindi)</label>
-          <input type="text" value="${ex.title_hi}" onchange="updateExhibitField(${idx}, 'title_hi', this.value)" class="w-full p-2 border rounded-lg bg-white">
-        </div>
-        <div class="sm:col-span-2">
-          <label class="block font-semibold mb-1">Image URL</label>
-          <input type="url" value="${ex.image_url}" onchange="updateExhibitField(${idx}, 'image_url', this.value)" class="w-full p-2 border rounded-lg bg-white">
-        </div>
-        <div class="sm:col-span-2">
-          <label class="block font-semibold mb-1">Description (English)</label>
-          <textarea rows="2" onchange="updateExhibitField(${idx}, 'desc_en', this.value)" class="w-full p-2 border rounded-lg bg-white">${ex.desc_en}</textarea>
-        </div>
-        <div class="sm:col-span-2">
-          <label class="block font-semibold mb-1">Description (Hindi)</label>
-          <textarea rows="2" onchange="updateExhibitField(${idx}, 'desc_hi', this.value)" class="w-full p-2 border rounded-lg bg-white">${ex.desc_hi}</textarea>
-        </div>
-      </div>
+      <div class="font-bold">Exhibit ${ex.order_num || (idx + 1)}: ${ex.title_en}</div>
+      <input type="text" value="${ex.title_en}" onchange="updateExhibitField(${idx}, 'title_en', this.value)" class="w-full p-2 border rounded-lg bg-white" placeholder="Title (English)">
+      <input type="text" value="${ex.title_hi}" onchange="updateExhibitField(${idx}, 'title_hi', this.value)" class="w-full p-2 border rounded-lg bg-white" placeholder="Title (Hindi)">
+      <input type="url" value="${ex.image_url}" onchange="updateExhibitField(${idx}, 'image_url', this.value)" class="w-full p-2 border rounded-lg bg-white" placeholder="Image URL">
+      <textarea rows="2" onchange="updateExhibitField(${idx}, 'desc_en', this.value)" class="w-full p-2 border rounded-lg bg-white" placeholder="Description (English)">${ex.desc_en}</textarea>
+      <textarea rows="2" onchange="updateExhibitField(${idx}, 'desc_hi', this.value)" class="w-full p-2 border rounded-lg bg-white" placeholder="Description (Hindi)">${ex.desc_hi}</textarea>
     `;
     container.appendChild(item);
   });
@@ -806,16 +773,13 @@ function renderAdminGallery() {
 
   state.galleryItems.forEach((item, idx) => {
     const card = document.createElement('div');
-    card.className = 'p-3 bg-slate-50 border rounded-xl flex items-center justify-between text-xs';
+    card.className = 'p-2 bg-slate-50 border rounded-xl flex items-center justify-between text-xs';
     card.innerHTML = `
-      <div class="flex items-center gap-3">
-        <img src="${item.image_url}" class="w-12 h-12 object-cover rounded-lg">
-        <div>
-          <p class="font-bold">${item.title}</p>
-          <p class="text-slate-400">${item.category}</p>
-        </div>
+      <div class="flex items-center gap-2">
+        <img src="${item.image_url}" class="w-10 h-10 object-cover rounded-lg">
+        <span class="font-bold">${item.title}</span>
       </div>
-      <button onclick="deleteGalleryItem(${idx})" class="text-red-600 hover:underline">Delete</button>
+      <button onclick="deleteGalleryItem(${idx})" class="text-red-600 font-bold">Delete</button>
     `;
     container.appendChild(card);
   });
@@ -823,7 +787,7 @@ function renderAdminGallery() {
 
 window.deleteGalleryItem = async function(idx) {
   const item = state.galleryItems[idx];
-  if (confirm('Delete this artwork?')) {
+  if (confirm('Delete artwork?')) {
     if (supabaseClient && item.id) {
       await supabaseClient.from('gallery_items').delete().eq('id', item.id);
     }
@@ -839,13 +803,13 @@ function renderAdminEvents() {
 
   state.events.forEach((ev, idx) => {
     const card = document.createElement('div');
-    card.className = 'p-3 bg-slate-50 border rounded-xl flex items-center justify-between text-xs';
+    card.className = 'p-2 bg-slate-50 border rounded-xl flex items-center justify-between text-xs';
     card.innerHTML = `
       <div>
         <p class="font-bold">${ev.title}</p>
-        <p class="text-slate-500">${ev.date_str} &bull; ${ev.venue}</p>
+        <p class="text-slate-400 text-2xs">${ev.date_str}</p>
       </div>
-      <button onclick="deleteEventItem(${idx})" class="text-red-600 hover:underline">Delete</button>
+      <button onclick="deleteEventItem(${idx})" class="text-red-600 font-bold">Delete</button>
     `;
     container.appendChild(card);
   });
@@ -853,7 +817,7 @@ function renderAdminEvents() {
 
 window.deleteEventItem = async function(idx) {
   const item = state.events[idx];
-  if (confirm('Delete this event?')) {
+  if (confirm('Delete event?')) {
     if (supabaseClient && item.id) {
       await supabaseClient.from('events').delete().eq('id', item.id);
     }
@@ -865,35 +829,32 @@ window.deleteEventItem = async function(idx) {
 
 async function fetchAdminResponses() {
   const container = document.getElementById('adminResponsesList');
-  container.innerHTML = '<div class="text-center py-4 text-xs text-slate-400">Loading saved responses from Supabase...</div>';
+  container.innerHTML = '<div class="text-center py-4 text-xs text-slate-400">Loading responses...</div>';
 
-  if (!supabaseClient) {
-    container.innerHTML = '<div class="text-xs text-slate-500">Supabase client offline.</div>';
-    return;
-  }
+  if (!supabaseClient) return;
 
   try {
-    const { data, error } = await supabaseClient.from('responses').select('*').order('created_at', { ascending: false });
-    if (error || !data || data.length === 0) {
-      container.innerHTML = '<div class="text-center py-6 text-xs text-slate-400">No responses in database yet.</div>';
+    const { data } = await supabaseClient.from('responses').select('*').order('created_at', { ascending: false });
+    if (!data || data.length === 0) {
+      container.innerHTML = '<div class="text-center py-4 text-xs text-slate-400">No responses recorded yet.</div>';
       return;
     }
 
     container.innerHTML = '';
     data.forEach(r => {
       const card = document.createElement('div');
-      card.className = 'p-4 bg-slate-50 border rounded-xl space-y-1 text-xs';
+      card.className = 'p-3 bg-slate-50 border rounded-xl text-xs space-y-1';
       card.innerHTML = `
-        <div class="flex items-center justify-between font-bold text-slate-800">
-          <span>${r.name} (${r.phone || r.email || 'No contact'})</span>
-          <span class="text-slate-400 text-2xs">${new Date(r.created_at).toLocaleString()}</span>
+        <div class="flex justify-between font-bold">
+          <span>${r.name} (${r.phone || 'No phone'})</span>
+          <span class="text-2xs text-slate-400">${new Date(r.created_at).toLocaleDateString()}</span>
         </div>
-        <p class="text-amber-800 font-semibold">Topic: ${r.topic || 'General'}</p>
+        <p class="text-amber-800 font-semibold">${r.topic || 'General'}</p>
         <p class="text-slate-600">${r.message}</p>
       `;
       container.appendChild(card);
     });
   } catch (err) {
-    container.innerHTML = '<div class="text-xs text-red-500">Could not fetch responses.</div>';
+    container.innerHTML = '<div class="text-xs text-red-500">Failed to load responses.</div>';
   }
 }
