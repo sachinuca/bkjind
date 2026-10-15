@@ -3,291 +3,739 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sachin Sharma | Dynamic Showcase & Hub</title>
-  <meta name="description" content="Personal showcase powered by GitHub Pages and Supabase with dynamic media and durable response storage.">
-  
+  <title>Brahma Kumaris | Spiritual Wisdom & Divine Art Gallery</title>
+  <meta name="description" content="Official spiritual portal for Brahma Kumaris. Explore Raja Yoga meditation, Divine Art Gallery exhibitions with audio guides in Hindi and English, upcoming events, and spiritual wisdom.">
+
+  <!-- GitHub Pages SPA routing script (restores path from 404.html) -->
+  <script>
+    (function(l) {
+      if (l.search[1] === '/' ) {
+        var decoded = l.search.slice(1).split('&').map(function(s) { 
+          return s.replace(/~and~/g, '&')
+        }).join('?');
+        window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+        );
+      }
+    }(window.location))
+  </script>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
+
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
+            bk: {
+              gold: '#d97706',
+              lightgold: '#fef3c7',
+              red: '#dc2626',
+              maroon: '#991b1b',
+              peace: '#0284c7',
+              softblue: '#f0f9ff'
             }
           }
         }
       }
     }
   </script>
-  
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Rozha+One&family=Yatra+One&display=swap');
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    .glass {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+    .font-spiritual {
+      font-family: 'Rozha One', serif;
     }
-    .dark .glass {
-      background: rgba(17, 24, 39, 0.75);
+    .shiva-glow {
+      box-shadow: 0 0 35px -5px rgba(234, 88, 12, 0.45);
     }
-    .gradient-text {
-      background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .glass-header {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-200">
+<body class="bg-amber-50/20 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-amber-100 selection:text-amber-900">
 
-  <!-- Navigation -->
-  <header class="sticky top-0 z-40 w-full glass border-b border-slate-200/80 dark:border-slate-800/80">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-500/20">
-          SS
+  <!-- Top Spiritual Banner / Announcement Bar -->
+  <div class="bg-gradient-to-r from-red-700 via-amber-600 to-red-800 text-white text-xs py-1.5 px-4 text-center font-medium shadow-inner flex items-center justify-center gap-2">
+    <span class="inline-block w-2 h-2 rounded-full bg-yellow-300 animate-ping"></span>
+    <span>✨ Om Shanti &bull; Welcome to Brahma Kumaris Divine Wisdom & Art Gallery Portal</span>
+  </div>
+
+  <!-- Main Navigation Bar -->
+  <header class="sticky top-0 z-40 w-full glass-header border-b border-amber-200/60 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Logo & Brand -->
+      <a href="/home" onclick="handleNav(event, '/home')" class="flex items-center gap-3 group">
+        <div class="relative w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 via-red-500 to-yellow-400 p-0.5 shadow-md shadow-amber-500/30 group-hover:scale-105 transition duration-300">
+          <div class="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+            <!-- Radiant Point of Light / Shiva Symbol -->
+            <div class="w-3.5 h-3.5 rounded-full bg-gradient-to-r from-red-600 to-amber-500 shadow-lg shadow-orange-500/80 animate-pulse"></div>
+          </div>
         </div>
         <div>
-          <span class="font-bold text-lg tracking-tight">Sachin Sharma</span>
-          <span class="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium border border-emerald-500/20">
-            Live on GitHub + Supabase
-          </span>
+          <div class="font-bold text-lg text-slate-900 tracking-tight flex items-center gap-1.5">
+            <span id="navSiteTitle">Brahma Kumaris</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold border border-amber-200">NGO</span>
+          </div>
+          <p id="navSiteTagline" class="text-xs text-slate-500 font-medium">World Transformation through Self Transformation</p>
         </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <nav class="hidden md:flex items-center gap-1 lg:gap-2">
+        <a href="/home" onclick="handleNav(event, '/home')" class="nav-link px-3.5 py-2 rounded-xl text-sm font-semibold transition" data-path="/home">Home</a>
+        <a href="/events" onclick="handleNav(event, '/events')" class="nav-link px-3.5 py-2 rounded-xl text-sm font-semibold transition" data-path="/events">Events</a>
+        <a href="/gallery" onclick="handleNav(event, '/gallery')" class="nav-link px-3.5 py-2 rounded-xl text-sm font-semibold transition" data-path="/gallery">Divine Art Gallery</a>
+        <a href="/about" onclick="handleNav(event, '/about')" class="nav-link px-3.5 py-2 rounded-xl text-sm font-semibold transition" data-path="/about">About Us</a>
+      </nav>
+
+      <!-- Action Button / Gallery Guide Quick Link -->
+      <div class="hidden sm:flex items-center gap-3">
+        <a href="/gallery-guide" onclick="handleNav(event, '/gallery-guide')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-red-600 hover:from-amber-600 hover:to-red-700 text-white font-semibold text-xs tracking-wide shadow-md shadow-amber-600/20 transition transform hover:-translate-y-0.5">
+          <i data-lucide="headphones" class="w-4 h-4"></i>
+          <span>Audio Exhibition Guide</span>
+        </a>
       </div>
 
-      <nav class="flex items-center gap-3 sm:gap-6">
-        <a href="#media" class="text-sm font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition">Media</a>
-        <a href="#feedback" class="text-sm font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition">Responses</a>
-        <button id="adminBtn" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 transition">
-          <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-          <span>Manage Content</span>
-        </button>
-      </nav>
+      <!-- Mobile Menu Button -->
+      <button id="mobileMenuBtn" class="md:hidden p-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Dropdown -->
+    <div id="mobileMenu" class="md:hidden hidden border-t border-amber-100 bg-white/95 px-4 pt-2 pb-4 space-y-1">
+      <a href="/home" onclick="handleNav(event, '/home')" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-amber-50">Home</a>
+      <a href="/events" onclick="handleNav(event, '/events')" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-amber-50">Events</a>
+      <a href="/gallery" onclick="handleNav(event, '/gallery')" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-amber-50">Divine Art Gallery</a>
+      <a href="/gallery-guide" onclick="handleNav(event, '/gallery-guide')" class="block px-3 py-2 rounded-lg text-sm font-semibold text-amber-700 font-bold hover:bg-amber-50">🎧 Art Gallery Guide (Audio)</a>
+      <a href="/about" onclick="handleNav(event, '/about')" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-amber-50">About Us</a>
+      <a href="/admin" onclick="handleNav(event, '/admin')" class="block px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">⚙️ Admin Page</a>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="relative overflow-hidden py-16 sm:py-24">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 mb-6">
-        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-        Static Frontend + Durable Cloud Database
-      </div>
-      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">
-        Hosted on GitHub Pages,<br>
-        <span class="gradient-text">Dynamic Media & Real-time Storage.</span>
-      </h1>
-      <p class="max-w-2xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-        Everything you add or update—audio tracks, video players, content updates, and user responses—is stored with 100% durability in PostgreSQL via Supabase, with zero server maintenance.
-      </p>
-      
-      <div class="flex flex-wrap items-center justify-center gap-4">
-        <a href="#feedback" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 transition">
-          Leave a Response
-        </a>
-        <a href="#media" class="px-6 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 font-semibold text-sm transition">
-          Browse Audio & Videos
-        </a>
-      </div>
+  <!-- ========================================================================= -->
+  <!-- MAIN APPLICATION PAGES (Client-Side Routed SPA) -->
+  <!-- ========================================================================= -->
+  <main class="flex-1">
 
-      <!-- Live Database Status Banner -->
-      <div id="dbStatusBanner" class="mt-8 max-w-md mx-auto p-3 rounded-xl text-xs font-medium flex items-center justify-center gap-2 border bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900/60 text-amber-700 dark:text-amber-300">
-        <i data-lucide="database" class="w-4 h-4 animate-pulse"></i>
-        <span id="dbStatusText">Checking Supabase connection...</span>
-      </div>
-    </div>
-  </section>
+    <!-- PAGE 1: HOME (/home) -->
+    <section id="page-home" class="page-view">
+      <!-- Spiritual Hero Section -->
+      <div class="relative overflow-hidden bg-gradient-to-b from-amber-100/50 via-white to-transparent py-20 lg:py-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-900 border border-amber-500/20 mb-6">
+            <span class="w-2 h-2 rounded-full bg-amber-600"></span>
+            Om Shanti &bull; Self-Empowerment Through Raja Yoga
+          </div>
 
-  <!-- Dynamic Media Section (Audio & Video) -->
-  <section id="media" class="py-12 border-t border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/40">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-        <div>
-          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Audio & Video Showcase</h2>
-          <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">
-            Media links stored dynamically in Supabase. Change or add new tracks/videos anytime via the admin panel!
+          <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6">
+            Awaken Your Inner Light.<br>
+            <span class="bg-gradient-to-r from-red-600 via-amber-600 to-yellow-600 bg-clip-text text-transparent">
+              Experience Supreme Peace.
+            </span>
+          </h1>
+
+          <p class="max-w-3xl mx-auto text-base sm:text-xl text-slate-600 leading-relaxed mb-10">
+            Prajapita Brahma Kumaris Ishwariya Vishwa Vidyalaya is a worldwide spiritual movement dedicated to personal transformation and world renewal through spiritual wisdom, pure living, and Raja Yoga meditation.
           </p>
-        </div>
-        <div class="flex gap-2">
-          <button onclick="filterMedia('all')" class="media-filter-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white" data-filter="all">All</button>
-          <button onclick="filterMedia('audio')" class="media-filter-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" data-filter="audio">Audio</button>
-          <button onclick="filterMedia('video')" class="media-filter-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" data-filter="video">Video</button>
-        </div>
-      </div>
 
-      <!-- Media Grid -->
-      <div id="mediaGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Rendered dynamically by JavaScript -->
-        <div class="col-span-full py-12 text-center text-slate-400">
-          <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2 text-indigo-500"></i>
-          Loading media...
-        </div>
-      </div>
-    </div>
-  </section>
+          <div class="flex flex-wrap items-center justify-center gap-4">
+            <a href="/gallery" onclick="handleNav(event, '/gallery')" class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-red-600 hover:from-amber-600 hover:to-red-700 text-white font-bold text-sm shadow-xl shadow-amber-600/25 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+              <i data-lucide="palette" class="w-4 h-4"></i>
+              <span>Visit Divine Art Gallery</span>
+            </a>
+            <a href="/gallery-guide" onclick="handleNav(event, '/gallery-guide')" class="px-8 py-3.5 rounded-xl bg-white border border-amber-300 text-amber-900 hover:bg-amber-50 font-bold text-sm shadow-sm transition flex items-center gap-2">
+              <i data-lucide="volume-2" class="w-4 h-4 text-amber-600"></i>
+              <span>Listen to Exhibition Guide</span>
+            </a>
+            <a href="/events" onclick="handleNav(event, '/events')" class="px-6 py-3.5 rounded-xl text-slate-700 hover:text-slate-900 font-semibold text-sm transition">
+              View Upcoming Events &rarr;
+            </a>
+          </div>
 
-  <!-- Durable Response Storage & Feedback Section -->
-  <section id="feedback" class="py-16">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-12">
-        <h2 class="text-3xl font-bold tracking-tight">Durable Responses & Feedback</h2>
-        <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">
-          Submit a message, rating, or inquiry. Data is durably saved straight into PostgreSQL via Supabase and immediately visible.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <!-- Submission Form (5 cols) -->
-        <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-            <i data-lucide="message-square-plus" class="w-5 h-5 text-indigo-500"></i>
-            Send a Response
-          </h3>
-
-          <form id="responseForm" class="space-y-4">
-            <div>
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Your Name</label>
-              <input type="text" id="respName" required placeholder="e.g. Alex Kumar" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Email (Optional)</label>
-              <input type="email" id="respEmail" placeholder="you@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Category</label>
-              <select id="respCategory" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <option value="General Inquiry">General Inquiry</option>
-                <option value="Project Collaboration">Project Collaboration</option>
-                <option value="Audio / Video Feedback">Audio / Video Feedback</option>
-                <option value="Test Message">Test Message</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Rating</label>
-              <div class="flex items-center gap-2" id="ratingPicker">
-                <button type="button" data-val="1" class="star-btn text-amber-400"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
-                <button type="button" data-val="2" class="star-btn text-amber-400"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
-                <button type="button" data-val="3" class="star-btn text-amber-400"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
-                <button type="button" data-val="4" class="star-btn text-amber-400"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
-                <button type="button" data-val="5" class="star-btn text-amber-400"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
-                <span id="ratingValue" class="text-xs font-semibold ml-2 text-slate-500">5 / 5</span>
+          <!-- Supreme Soul Point of Light Symbol -->
+          <div class="mt-16 flex justify-center">
+            <div class="relative w-36 h-36 rounded-full bg-gradient-to-b from-amber-400/20 to-red-500/20 p-4 shiva-glow animate-pulse flex items-center justify-center">
+              <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center text-white shadow-lg">
+                <div class="w-6 h-6 rounded-full bg-white shadow-xl shadow-yellow-300 animate-ping"></div>
               </div>
             </div>
+          </div>
+          <p class="text-xs font-semibold uppercase tracking-widest text-slate-500 mt-4">
+            शिव बाबा &bull; Supreme Soul Incorporeal Point of Light
+          </p>
+        </div>
+      </div>
 
+      <!-- Core Pillars -->
+      <div class="py-16 bg-white border-y border-amber-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-slate-900">Four Pillars of Spiritual Life</h2>
+            <p class="text-slate-500 text-sm mt-2">Guiding human souls toward ultimate purity, inner harmony, and divine virtues.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="p-6 rounded-2xl bg-amber-50/50 border border-amber-200/60 hover:shadow-md transition">
+              <div class="w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center mb-4 font-bold text-lg">ज्ञान</div>
+              <h3 class="font-bold text-lg text-slate-900 mb-1">Gyan (Wisdom)</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">Understanding the true nature of the self (soul), the Supreme Soul, the World Drama, and the Law of Karma.</p>
+            </div>
+            <div class="p-6 rounded-2xl bg-red-50/50 border border-red-200/60 hover:shadow-md transition">
+              <div class="w-12 h-12 rounded-xl bg-red-600 text-white flex items-center justify-center mb-4 font-bold text-lg">योग</div>
+              <h3 class="font-bold text-lg text-slate-900 mb-1">Yoga (Meditation)</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">Direct mental link with Supreme Soul Shiva, absorbing peace, unconditional love, and spiritual powers.</p>
+            </div>
+            <div class="p-6 rounded-2xl bg-sky-50/50 border border-sky-200/60 hover:shadow-md transition">
+              <div class="w-12 h-12 rounded-xl bg-sky-600 text-white flex items-center justify-center mb-4 font-bold text-lg">धारणा</div>
+              <h3 class="font-bold text-lg text-slate-900 mb-1">Dharna (Purity)</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">Imbibing divine virtues like purity, compassion, sweetness, truthfulness, and non-violence in daily conduct.</p>
+            </div>
+            <div class="p-6 rounded-2xl bg-emerald-50/50 border border-emerald-200/60 hover:shadow-md transition">
+              <div class="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center mb-4 font-bold text-lg">सेवा</div>
+              <h3 class="font-bold text-lg text-slate-900 mb-1">Seva (Selfless Service)</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">Spreading pure vibrations, peace, and spiritual knowledge to uplift every soul without discrimination.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- PAGE 2: EVENTS (/events) -->
+    <section id="page-events" class="page-view hidden py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-14">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-3 py-1 rounded-full border border-amber-200">Spiritual Gatherings</span>
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mt-3">Upcoming Events & Courses</h1>
+          <p class="text-slate-600 text-sm sm:text-base mt-3">
+            All Brahma Kumaris courses, meditation workshops, and retreats are provided completely free of charge as a service to humanity.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Events List (8 cols) -->
+          <div class="lg:col-span-8 space-y-4" id="eventsContainer">
+            <!-- Populated from Supabase -->
+            <div class="p-8 text-center bg-white rounded-2xl border border-amber-200/60 shadow-xs">
+              <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-amber-600 mb-2"></i>
+              <p class="text-sm text-slate-500">Loading upcoming spiritual events...</p>
+            </div>
+          </div>
+
+          <!-- Event Registration / Inquiry Form (4 cols) -->
+          <div class="lg:col-span-4 bg-white p-6 sm:p-8 rounded-2xl border border-amber-200 shadow-sm sticky top-28">
+            <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+              <i data-lucide="calendar-plus" class="w-5 h-5 text-amber-600"></i>
+              Course Registration / Inquiry
+            </h3>
+            <p class="text-xs text-slate-500 mb-6">Register for the free 7-Day Foundation Course or send an inquiry to your local center.</p>
+
+            <form id="eventInquiryForm" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Your Full Name</label>
+                <input type="text" id="evName" required placeholder="e.g. Ramesh Chandra" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Phone / WhatsApp</label>
+                <input type="tel" id="evPhone" required placeholder="+91 98765 43210" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Email (Optional)</label>
+                <input type="email" id="evEmail" placeholder="you@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Event / Course</label>
+                <select id="evTopic" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="7-Day Foundation Course">7-Day Raja Yoga Foundation Course</option>
+                  <option value="World Peace Meditation Hour">World Peace Meditation Hour</option>
+                  <option value="Stress-Free Living Retreat">Stress-Free Living Retreat</option>
+                  <option value="General Spiritual Inquiry">General Inquiry</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Message / Question</label>
+                <textarea id="evMessage" rows="3" placeholder="Tell us about your city or questions..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+              </div>
+
+              <button type="submit" id="evSubmitBtn" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-red-600 text-white font-bold text-sm shadow-md shadow-amber-600/20 hover:from-amber-600 hover:to-red-700 transition flex items-center justify-center gap-2">
+                <i data-lucide="send" class="w-4 h-4"></i>
+                <span>Submit to Center</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- PAGE 3: DIVINE ART GALLERY (/gallery) -->
+    <section id="page-gallery" class="page-view hidden py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header with 2 Prominent Buttons as requested -->
+        <div class="text-center max-w-3xl mx-auto mb-10">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-3 py-1 rounded-full border border-amber-200">Spiritual Visualizations</span>
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mt-3">Divine Art Gallery</h1>
+          <p class="text-slate-600 text-sm sm:text-base mt-3">
+            Sacred paintings and artistic illustrations that depict profound spiritual truths, the journey of human souls, and the divine descent of Supreme Father Shiva.
+          </p>
+
+          <!-- The Two Primary Action Buttons -->
+          <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <button onclick="handleNav(event, '/gallery')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-red-600 text-white font-bold text-sm shadow-md shadow-amber-600/25 flex items-center gap-2 ring-2 ring-amber-400/40">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+              <span>1. Visit Art Gallery</span>
+            </button>
+            
+            <a href="/gallery-guide" onclick="handleNav(event, '/gallery-guide')" class="px-6 py-3 rounded-xl bg-white border-2 border-amber-500 text-amber-900 hover:bg-amber-50 font-bold text-sm shadow-sm flex items-center gap-2 transition transform hover:scale-105">
+              <i data-lucide="headphones" class="w-4 h-4 text-amber-600"></i>
+              <span>2. Art Gallery Guide (Listen with Audio)</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Visual Art Gallery Grid -->
+        <div id="artGalleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Populated from Supabase / Local Data -->
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- PAGE 4: ART GALLERY GUIDE (/gallery-guide) - THE KEY FEATURE -->
+    <section id="page-gallery-guide" class="page-view hidden py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-red-100 text-red-800 border border-red-200 mb-3">
+            <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
+            Interactive Spiritual Audio & Visual Guide
+          </div>
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">10 Sacred Exhibition Panels</h1>
+          <p class="text-slate-600 text-sm sm:text-base mt-3">
+            Click on any exhibition image below to inspect the sacred artwork, read the detailed explanation in <strong class="text-amber-700">Hindi or English</strong>, and click the <strong class="text-red-700">Listen Button</strong> to hear the guided narration!
+          </p>
+        </div>
+
+        <!-- 10 Exhibition Panels Grid -->
+        <div id="exhibitionsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Populated dynamically (10 items) -->
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- PAGE 5: ABOUT US (/about) -->
+    <section id="page-about" class="page-view hidden py-16">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-14">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-3 py-1 rounded-full border border-amber-200">About Our Organization</span>
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mt-3">Brahma Kumaris Ishwariya Vishwa Vidyalaya</h1>
+          <p class="text-slate-600 text-sm sm:text-base mt-3">
+            A spiritual movement founded in 1936, now operating in over 140 countries across all continents with general consultative status with the United Nations ECOSOC.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-3xl p-8 sm:p-12 border border-amber-200 shadow-sm space-y-8 mb-12">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900 mb-3">Our Spiritual Mission</h2>
+            <p class="text-slate-600 leading-relaxed text-sm sm:text-base">
+              The purpose of the Brahma Kumaris is to help people rediscover their intrinsic goodness, peace, and spiritual dignity. By teaching Raja Yoga meditation and values-based living, we empower individuals to overcome stress, cultivate positive relationships, and contribute to an atmosphere of worldwide harmony and benevolence.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-amber-100">
             <div>
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Your Message</label>
-              <textarea id="respMessage" rows="3" required placeholder="Write your message or inquiry here..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+              <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-4 h-4 text-amber-600"></i>
+                International Headquarters
+              </h3>
+              <p id="aboutAddress" class="text-xs text-slate-600 leading-relaxed">
+                Pandav Bhawan / Shantivan, Mount Abu, Rajasthan, India
+              </p>
             </div>
 
-            <button type="submit" id="submitBtn" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 transition disabled:opacity-50">
-              <i data-lucide="send" class="w-4 h-4"></i>
-              <span>Save to Supabase</span>
+            <div>
+              <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                <i data-lucide="mail" class="w-4 h-4 text-amber-600"></i>
+                Contact & Inquiries
+              </h3>
+              <p id="aboutContact" class="text-xs text-slate-600 leading-relaxed">
+                Email: contact@brahmakumaris.org<br>
+                Phone: +91 98765 43210
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Media Channels & Accounts Section (as requested) -->
+        <div class="bg-gradient-to-tr from-amber-500 via-red-600 to-amber-700 rounded-3xl p-8 sm:p-10 text-white shadow-xl mb-12">
+          <h2 class="text-2xl font-bold mb-2">Connect With Us Globally</h2>
+          <p class="text-xs sm:text-sm text-amber-100 mb-6">Follow our daily spiritual discourses, guided meditations, and live broadcasts across our official channels.</p>
+          
+          <div class="flex flex-wrap gap-4">
+            <a id="linkYouTube" href="https://www.youtube.com/@BrahmaKumaris" target="_blank" class="px-5 py-2.5 rounded-xl bg-white text-red-600 font-bold text-xs shadow-md hover:bg-amber-50 transition flex items-center gap-2">
+              <i data-lucide="youtube" class="w-4 h-4"></i>
+              <span>Official YouTube Channel</span>
+            </a>
+            <a id="linkInstagram" href="https://www.instagram.com/brahmakumaris" target="_blank" class="px-5 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs backdrop-blur-md transition flex items-center gap-2">
+              <i data-lucide="instagram" class="w-4 h-4"></i>
+              <span>Instagram</span>
+            </a>
+            <a id="linkFacebook" href="https://www.facebook.com/brahmakumaris" target="_blank" class="px-5 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs backdrop-blur-md transition flex items-center gap-2">
+              <i data-lucide="facebook" class="w-4 h-4"></i>
+              <span>Facebook</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Bottom bar linking to Admin Page (as requested) -->
+        <div class="text-center py-6 border-t border-amber-200">
+          <p class="text-xs text-slate-500 mb-2">Are you an authorized center coordinator or website administrator?</p>
+          <a href="/admin" onclick="handleNav(event, '/admin')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+            <span>Portal Admin Page (Login & Edit Content)</span>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- PAGE 6: ADMIN DASHBOARD (/admin) -->
+    <section id="page-admin" class="page-view hidden py-16">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Login Box (When unauthenticated) -->
+        <div id="adminLoginBox" class="max-w-md mx-auto bg-white p-8 rounded-3xl border border-amber-200 shadow-xl">
+          <div class="text-center mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto mb-3">
+              <i data-lucide="shield-check" class="w-7 h-7"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-900">Admin Portal Login</h1>
+            <p class="text-xs text-slate-500 mt-1">Enter your credentials to edit texts, links, audio, and exhibitions across the entire website.</p>
+          </div>
+
+          <form id="adminLoginForm" class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Username</label>
+              <input type="text" id="adminUser" required placeholder="admin" value="admin" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Password</label>
+              <input type="password" id="adminPass" required placeholder="Enter password" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <p class="text-2xs text-xs text-slate-400 mt-1">Default Password: <code class="font-bold text-amber-600">omshanti2026</code></p>
+            </div>
+
+            <p id="adminLoginError" class="text-xs text-red-600 font-semibold hidden">Invalid username or password.</p>
+
+            <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-red-600 text-white font-bold text-sm shadow-md shadow-amber-600/25 hover:from-amber-600 hover:to-red-700 transition">
+              Sign In to Admin CMS
             </button>
           </form>
         </div>
 
-        <!-- Live Community Responses Wall (7 cols) -->
-        <div class="lg:col-span-7">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-bold flex items-center gap-2">
-              <i data-lucide="layers" class="w-5 h-5 text-indigo-500"></i>
-              Stored Responses Wall
-            </h3>
-            <button onclick="loadResponses()" class="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
-              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
+        <!-- Admin Control Panel (When logged in) -->
+        <div id="adminPanel" class="hidden space-y-8">
+          
+          <!-- Admin Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-amber-200 shadow-xs">
+            <div>
+              <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="edit-3" class="w-6 h-6 text-amber-600"></i>
+                Website Content Management System (CMS)
+              </h1>
+              <p class="text-xs text-slate-500">Edit any text, audio, YouTube link, or exhibition. All changes sync directly to Supabase!</p>
+            </div>
+            <button onclick="adminLogout()" class="px-4 py-2 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold flex items-center gap-1.5 self-start sm:self-auto">
+              <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
             </button>
           </div>
 
-          <div id="responsesList" class="space-y-3 max-h-[550px] overflow-y-auto pr-1">
-            <!-- Dynamically populated -->
-            <div class="p-8 text-center text-slate-400">
-              Loading stored responses...
+          <!-- Admin Tabs -->
+          <div class="flex gap-2 border-b border-amber-200 pb-2 overflow-x-auto">
+            <button onclick="switchAdminTab('general')" class="admin-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 text-white" data-tab="general">General & Social Links</button>
+            <button onclick="switchAdminTab('exhibitions')" class="admin-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border" data-tab="exhibitions">10 Exhibits Guide</button>
+            <button onclick="switchAdminTab('gallery')" class="admin-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border" data-tab="gallery">Art Gallery Photos</button>
+            <button onclick="switchAdminTab('events')" class="admin-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border" data-tab="events">Events & Courses</button>
+            <button onclick="switchAdminTab('responses')" class="admin-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border" data-tab="responses">Visitor Responses</button>
+          </div>
+
+          <!-- TAB 1: General & Social Links -->
+          <div id="tab-general" class="admin-tab-content bg-white p-6 sm:p-8 rounded-2xl border border-amber-200 space-y-4">
+            <h2 class="text-lg font-bold text-slate-900 mb-2">Edit Site Settings & Social Media Links</h2>
+            
+            <form id="saveSettingsForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Site Title</label>
+                <input type="text" id="setSiteTitle" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Site Tagline / Motto</label>
+                <input type="text" id="setSiteTagline" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">YouTube Channel URL</label>
+                <input type="url" id="setYoutube" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Instagram URL</label>
+                <input type="url" id="setInstagram" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Facebook URL</label>
+                <input type="url" id="setFacebook" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Contact Email</label>
+                <input type="email" id="setEmail" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+
+              <div class="sm:col-span-2">
+                <button type="submit" class="px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+                  Save General Settings
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- TAB 2: 10 Exhibits Guide Manager -->
+          <div id="tab-exhibitions" class="admin-tab-content hidden bg-white p-6 sm:p-8 rounded-2xl border border-amber-200 space-y-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-lg font-bold text-slate-900">Manage 10 Exhibition Panels</h2>
+                <p class="text-xs text-slate-500">Edit titles, images, Hindi/English texts, or audio guide URLs.</p>
+              </div>
+            </div>
+
+            <div id="adminExhibitsList" class="space-y-4">
+              <!-- Rendered via JS -->
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Admin Modal (For editing Audio/Video & viewing management) -->
-  <div id="adminModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
-      <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <!-- TAB 3: Art Gallery Photos -->
+          <div id="tab-gallery" class="admin-tab-content hidden bg-white p-6 sm:p-8 rounded-2xl border border-amber-200 space-y-6">
+            <h2 class="text-lg font-bold text-slate-900">Add New Artwork to Divine Art Gallery</h2>
+            <form id="addGalleryItemForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-slate-200 pb-6">
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Artwork Title</label>
+                <input type="text" id="artTitle" required placeholder="e.g. Incorporeal Shiv Baba" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Category</label>
+                <input type="text" id="artCategory" placeholder="Spiritual Art" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Image URL</label>
+                <input type="url" id="artImageUrl" required placeholder="https://..." class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Description</label>
+                <textarea id="artDesc" rows="2" placeholder="Brief description of the artwork" class="w-full px-3.5 py-2.5 rounded-xl border text-sm"></textarea>
+              </div>
+              <div>
+                <button type="submit" class="px-5 py-2.5 bg-amber-600 text-white font-bold text-xs rounded-xl shadow-md">Add Artwork</button>
+              </div>
+            </form>
+
+            <div id="adminGalleryList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- TAB 4: Events Manager -->
+          <div id="tab-events" class="admin-tab-content hidden bg-white p-6 sm:p-8 rounded-2xl border border-amber-200 space-y-6">
+            <h2 class="text-lg font-bold text-slate-900">Add New Event / Course</h2>
+            <form id="addEventForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-slate-200 pb-6">
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Event Title</label>
+                <input type="text" id="newEventTitle" required placeholder="e.g. Meditation for Inner Peace" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Date & Time</label>
+                <input type="text" id="newEventDate" required placeholder="e.g. Next Sunday, 6:00 PM" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Venue / Platform</label>
+                <input type="text" id="newEventVenue" required placeholder="Online / Center Address" class="w-full px-3.5 py-2.5 rounded-xl border text-sm">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Description</label>
+                <textarea id="newEventDesc" rows="2" placeholder="Event details..." class="w-full px-3.5 py-2.5 rounded-xl border text-sm"></textarea>
+              </div>
+              <div>
+                <button type="submit" class="px-5 py-2.5 bg-amber-600 text-white font-bold text-xs rounded-xl shadow-md">Publish Event</button>
+              </div>
+            </form>
+
+            <div id="adminEventsList" class="space-y-3">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- TAB 5: Visitor Responses -->
+          <div id="tab-responses" class="admin-tab-content hidden bg-white p-6 sm:p-8 rounded-2xl border border-amber-200 space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-bold text-slate-900">All Saved Responses in Supabase</h2>
+              <button onclick="fetchAdminResponses()" class="text-xs font-bold text-amber-600 hover:underline flex items-center gap-1">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
+              </button>
+            </div>
+            <div id="adminResponsesList" class="space-y-3">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ========================================================================= -->
+  <!-- SACRED EXHIBITION MODAL (Audio Player + Hindi/English Switcher) -->
+  <!-- ========================================================================= -->
+  <div id="exhibitModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-3xl w-full border border-amber-200 shadow-2xl overflow-hidden relative my-auto">
+      
+      <!-- Close Button -->
+      <button onclick="closeExhibitModal()" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
-      <!-- PIN verification step -->
-      <div id="adminPinStep">
-        <h3 class="text-lg font-bold mb-2">Admin / Content Manager</h3>
-        <p class="text-xs text-slate-500 mb-4">Enter secret PIN to add or change audio, video, or content (Default PIN: <strong class="text-indigo-500">1234</strong>)</p>
-        <div class="flex gap-2">
-          <input type="password" id="adminPinInput" placeholder="Enter PIN" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
-          <button onclick="verifyPin()" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold">Unlock</button>
+      <!-- Exhibition Image Banner -->
+      <div class="relative w-full h-64 sm:h-80 bg-slate-950 overflow-hidden">
+        <img id="modalImg" src="" alt="Exhibition Art" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
+        <div class="absolute bottom-4 left-4 right-4">
+          <span id="modalOrderTag" class="text-2xs sm:text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-500 text-white">
+            Exhibition 1 of 10
+          </span>
+          <h2 id="modalTitle" class="text-xl sm:text-2xl font-bold text-white mt-1">Exhibition Title</h2>
         </div>
-        <p id="pinError" class="text-xs text-rose-500 mt-2 hidden">Incorrect PIN! Try 1234</p>
       </div>
 
-      <!-- Admin Actions step -->
-      <div id="adminActionsStep" class="hidden">
-        <h3 class="text-lg font-bold mb-4">Add Audio / Video Item</h3>
+      <!-- Audio Guide Bar & Language Switcher -->
+      <div class="p-6 sm:p-8 space-y-6">
         
-        <form id="addMediaForm" class="space-y-3">
-          <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Type</label>
-            <select id="newMediaType" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
-              <option value="audio">Audio File (MP3 / Stream)</option>
-              <option value="video">Video (YouTube Embed or MP4)</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Title</label>
-            <input type="text" id="newMediaTitle" required placeholder="e.g. My Podcast Episode 1" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Media URL</label>
-            <input type="url" id="newMediaUrl" required placeholder="https://... (mp3 link or YouTube URL)" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Description (Optional)</label>
-            <textarea id="newMediaDesc" rows="2" placeholder="Brief note about this track or video" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm"></textarea>
-          </div>
-
-          <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="closeAdminModal()" class="px-4 py-2 border rounded-xl text-sm">Cancel</button>
-            <button type="submit" id="saveMediaBtn" class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold flex items-center gap-1.5">
-              <i data-lucide="plus" class="w-4 h-4"></i> Save Media
+        <!-- Controls Row: Audio Listen Button + Language Switcher -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-amber-50/80 border border-amber-200">
+          
+          <!-- Audio Guide Listen Button -->
+          <div class="flex items-center gap-3">
+            <button id="listenBtn" onclick="toggleAudioGuide()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700 text-white font-bold text-xs shadow-md shadow-red-600/25 flex items-center gap-2 transition transform active:scale-95">
+              <i id="listenIcon" data-lucide="volume-2" class="w-4 h-4"></i>
+              <span id="listenText">Listen Audio Guide</span>
             </button>
+            <span id="audioPlayingStatus" class="text-xs font-semibold text-slate-500 hidden items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Playing audio...
+            </span>
           </div>
-        </form>
+
+          <!-- Language Selector Tab (Hindi / English) -->
+          <div class="flex items-center gap-1 p-1 bg-white rounded-xl border border-amber-200 self-start sm:self-auto">
+            <button id="langBtnEn" onclick="switchExhibitLang('en')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-amber-600 text-white shadow-xs">English</button>
+            <button id="langBtnHi" onclick="switchExhibitLang('hi')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition hover:text-slate-900">हिन्दी (Hindi)</button>
+          </div>
+        </div>
+
+        <!-- Explanation Text -->
+        <div class="prose max-w-none">
+          <p id="modalDesc" class="text-slate-700 text-sm sm:text-base leading-relaxed whitespace-pre-line">
+            Exhibition details...
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+          <span>Prajapita Brahma Kumaris World Spiritual University</span>
+          <button onclick="closeExhibitModal()" class="px-4 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold">Close</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="py-8 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500">
-    <p>© <span id="currentYear"></span> Sachin Sharma. Hosted on <a href="https://pages.github.com" target="_blank" class="text-indigo-500 underline">GitHub Pages</a> &bull; Database on <a href="https://supabase.com" target="_blank" class="text-indigo-500 underline">Supabase PostgreSQL</a>.</p>
+
+  <!-- Global Footer -->
+  <footer class="bg-slate-900 text-slate-300 py-12 border-t border-amber-900/40 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center text-white font-bold text-xs">BK</div>
+            <span class="text-lg font-bold text-white tracking-tight">Brahma Kumaris</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed max-w-md">
+            Dedicated to spreading spiritual knowledge, moral values, and Raja Yoga meditation for world peace. Open to all individuals irrespective of religion, nationality, or caste.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">Quick Navigation</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="/home" onclick="handleNav(event, '/home')" class="hover:text-amber-300 transition">Home</a></li>
+            <li><a href="/events" onclick="handleNav(event, '/events')" class="hover:text-amber-300 transition">Events & Courses</a></li>
+            <li><a href="/gallery" onclick="handleNav(event, '/gallery')" class="hover:text-amber-300 transition">Divine Art Gallery</a></li>
+            <li><a href="/gallery-guide" onclick="handleNav(event, '/gallery-guide')" class="hover:text-amber-300 transition">10 Exhibits Audio Guide</a></li>
+            <li><a href="/about" onclick="handleNav(event, '/about')" class="hover:text-amber-300 transition">About Organization</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">Administrator Access</h4>
+          <p class="text-xs text-slate-400 mb-3">Manage site content, audio guide, events, and exhibition items.</p>
+          <a href="/admin" onclick="handleNav(event, '/admin')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-semibold text-xs border border-slate-700 transition">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+            <span>Portal Admin Page</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="pt-8 border-t border-slate-800 text-center text-2xs sm:text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p>© <span id="footerYear"></span> Brahma Kumaris. All Rights Reserved &bull; Hosted on GitHub Pages &bull; PostgreSQL on Supabase.</p>
+        <p class="flex items-center gap-3">
+          <a href="https://www.youtube.com/@BrahmaKumaris" target="_blank" class="hover:text-amber-300 transition">YouTube</a>
+          <a href="https://www.instagram.com/brahmakumaris" target="_blank" class="hover:text-amber-300 transition">Instagram</a>
+          <a href="/admin" onclick="handleNav(event, '/admin')" class="hover:text-amber-300 transition">Admin Login</a>
+        </p>
+      </div>
+    </div>
   </footer>
 
+  <!-- Application Logic -->
   <script src="app.js"></script>
 </body>
 </html>
