@@ -1,5 +1,5 @@
 // ==============================================================================
-// BRAHMA KUMARIS MOBILE-FIRST SPIRITUAL PORTAL ENGINE
+// BRAHMA KUMARIS JIND - MOBILE-FIRST GLASSMORPHIC SPIRITUAL PORTAL ENGINE
 // ==============================================================================
 
 // 1. Supabase Initialization
@@ -136,24 +136,24 @@ const state = {
     { id: 4, title: 'Celestial Nature & Purity', category: 'Nature & Divine', image_url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80', description: 'Pure vibrations healing human hearts and nature.' }
   ],
   events: [
-    { id: 1, title: '7-Day Foundation Course in Raja Yoga', date_str: 'Daily & Online', time_str: '7:00 AM - 8:30 AM', venue: 'All Centers & Zoom', description: 'Understand soul, Supreme Soul Shiva, and master positive thinking.' },
+    { id: 1, title: '7-Day Foundation Course in Raja Yoga', date_str: 'Daily & Online', time_str: '7:00 AM - 8:30 AM', venue: 'Brahma Kumaris Center, Jind', description: 'Understand soul, Supreme Soul Shiva, and master positive thinking.' },
     { id: 2, title: 'World Peace Meditation Hour', date_str: 'Every 3rd Sunday', time_str: '6:30 PM - 7:30 PM', venue: 'Global Centers & Live Stream', description: 'Radiating peaceful vibrations to heal humanity and nature.' },
-    { id: 3, title: 'Stress-Free Living Weekend Retreat', date_str: 'Upcoming Weekend', time_str: '10:00 AM - 4:00 PM', venue: 'Mount Abu / Local Retreat Centers', description: 'Recharge your inner battery with guided meditations and quiet time.' }
+    { id: 3, title: 'Stress-Free Living Weekend Retreat', date_str: 'Upcoming Weekend', time_str: '10:00 AM - 4:00 PM', venue: 'Brahma Kumaris Center, Jind', description: 'Recharge your inner battery with guided meditations and quiet time.' }
   ],
   settings: {
-    site_title: 'Brahma Kumaris',
+    site_title: 'Brahma Kumaris Jind',
     site_tagline: 'World Transformation through Self Transformation',
     youtube_url: 'https://www.youtube.com/@BrahmaKumaris',
     instagram_url: 'https://www.instagram.com/brahmakumaris',
     facebook_url: 'https://www.facebook.com/brahmakumaris',
-    contact_email: 'contact@brahmakumaris.org',
+    contact_email: 'jind@brahmakumaris.org',
     contact_phone: '+91 98765 43210',
-    center_address: 'Pandav Bhawan, Mount Abu, Rajasthan, India'
+    center_address: 'Brahma Kumaris Center, Jind, Haryana, India'
   }
 };
 
 // ==============================================================================
-// 3. Client-Side SPA Router (supports /home, /events, /gallery, /gallery-guide, /about, /admin)
+// 3. Client-Side SPA Router
 // ==============================================================================
 window.handleNav = function(e, path) {
   if (e) e.preventDefault();
@@ -177,9 +177,9 @@ function applyRoute(path) {
   // Update desktop nav highlights
   document.querySelectorAll('.nav-link').forEach(link => {
     if (link.getAttribute('data-path') === path) {
-      link.className = 'nav-link px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-100 text-amber-900';
+      link.className = 'nav-link px-3 py-1.5 rounded-xl text-xs font-extrabold bg-amber-500/15 text-amber-900 border border-amber-500/20';
     } else {
-      link.className = 'nav-link px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-amber-50';
+      link.className = 'nav-link px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-white/60';
     }
   });
 
@@ -188,14 +188,13 @@ function applyRoute(path) {
     const tabPath = tab.getAttribute('data-path');
     if (tabPath === path) {
       tab.classList.remove('text-slate-500');
-      tab.classList.add('text-amber-800', 'font-bold');
+      tab.classList.add('text-amber-800', 'font-extrabold');
     } else {
-      tab.classList.remove('text-amber-800', 'font-bold');
+      tab.classList.remove('text-amber-800', 'font-extrabold');
       tab.classList.add('text-slate-500');
     }
   });
 
-  // Show target page
   const pageMap = {
     '/home': 'page-home',
     '/events': 'page-events',
@@ -212,10 +211,8 @@ function applyRoute(path) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Refresh lucide icons
   if (window.lucide) window.lucide.createIcons();
 
-  // If entering admin page and already authenticated, show panel
   if (path === '/admin') {
     if (state.isAdmin) {
       document.getElementById('adminLoginBox').classList.add('hidden');
@@ -228,7 +225,6 @@ function applyRoute(path) {
   }
 }
 
-// Browser Back / Forward handler
 window.addEventListener('popstate', () => {
   const path = window.location.pathname || '/home';
   applyRoute(path);
@@ -300,7 +296,7 @@ function applySettingsToUI() {
 }
 
 // ==============================================================================
-// 5. 10 Sacred Exhibition Panels & Mobile Audio Guide (The Focus Feature)
+// 5. 10 Sacred Exhibition Panels & Mobile Audio Guide (No Cutoffs, Full Glass)
 // ==============================================================================
 function renderExhibitions() {
   const grid = document.getElementById('exhibitionsGrid');
@@ -309,31 +305,41 @@ function renderExhibitions() {
 
   state.exhibitions.forEach((exhibit, index) => {
     const card = document.createElement('div');
-    card.className = 'bg-white rounded-3xl border border-amber-200/80 overflow-hidden shadow-xs hover:shadow-md transition active:scale-[0.99]';
+    card.className = 'glass-card rounded-3xl overflow-hidden transition active:scale-[0.99] flex flex-col justify-between';
 
     card.innerHTML = `
-      <div class="relative w-full h-48 sm:h-56 overflow-hidden bg-slate-900 cursor-pointer" onclick="openExhibitModalByIndex(${index})">
+      <!-- Card Image & Header -->
+      <div class="relative w-full h-52 sm:h-64 overflow-hidden bg-slate-950 cursor-pointer" onclick="openExhibitModalByIndex(${index})">
         <img src="${exhibit.image_url}" alt="${exhibit.title_en}" class="w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
         <span class="absolute top-3 left-3 text-2xs font-extrabold uppercase px-2.5 py-1 rounded-full bg-amber-500 text-white shadow-md">
-          Exhibit ${exhibit.order_num || (index + 1)} of 10
+          Sacred Exhibit ${exhibit.order_num || (index + 1)} of 10
         </span>
-        <div class="absolute bottom-3 left-3 right-3 text-white">
-          <h3 class="font-extrabold text-base sm:text-lg leading-tight">${exhibit.title_en}</h3>
-          <p class="text-xs text-amber-200 font-medium mt-0.5">${exhibit.title_hi}</p>
+        <div class="absolute bottom-3 left-3.5 right-3.5 text-white">
+          <h3 class="font-extrabold text-base sm:text-lg leading-snug">${exhibit.title_en}</h3>
+          <p class="text-xs text-amber-200 font-bold mt-1 hindi-safe-text leading-relaxed">${exhibit.title_hi}</p>
         </div>
       </div>
 
-      <div class="p-4 sm:p-5 flex items-center justify-between gap-3">
-        <p class="text-xs text-slate-500 line-clamp-2 flex-1 cursor-pointer" onclick="openExhibitModalByIndex(${index})">
+      <!-- Card Body (Full unclipped description & 1-tap audio button) -->
+      <div class="p-4 sm:p-5 space-y-3">
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed cursor-pointer hindi-safe-text" onclick="openExhibitModalByIndex(${index})">
           ${exhibit.desc_en}
         </p>
 
-        <!-- Direct 1-Tap Audio Play Button on Card (Perfect for mobile users!) -->
-        <button onclick="quickPlayExhibitAudio(event, ${index})" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs shadow-md shadow-red-600/20 flex items-center gap-1.5 shrink-0 active:scale-95 transition">
-          <i data-lucide="volume-2" class="w-4 h-4"></i>
-          <span>Listen</span>
-        </button>
+        <!-- Direct Actions Row -->
+        <div class="pt-2 border-t border-amber-200/50 flex items-center justify-between gap-2">
+          <button onclick="openExhibitModalByIndex(${index})" class="text-xs font-extrabold text-amber-800 hover:text-amber-900 flex items-center gap-1 active:scale-95 transition">
+            <span>Read Details (हिन्दी / EN)</span>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+          </button>
+
+          <!-- 1-Tap Listen Audio Button -->
+          <button onclick="quickPlayExhibitAudio(event, ${index})" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-red-600 to-amber-600 text-white font-extrabold text-xs shadow-md shadow-red-600/25 flex items-center gap-1.5 shrink-0 active:scale-95 transition">
+            <i data-lucide="volume-2" class="w-4 h-4"></i>
+            <span>Listen</span>
+          </button>
+        </div>
       </div>
     `;
 
@@ -393,7 +399,6 @@ window.switchExhibitLang = function(lang) {
 
   updateExhibitModalLanguage();
 
-  // If currently speaking, restart in new language
   if (state.isSpeaking) {
     playAudioGuide();
   }
@@ -415,7 +420,7 @@ function updateExhibitModalLanguage() {
   }
 }
 
-// Audio Guide Narration (SpeechSynthesis + Audio File Fallback)
+// Audio Guide Narration
 window.toggleAudioGuide = function() {
   if (state.isSpeaking) {
     stopAudioGuide();
@@ -434,7 +439,6 @@ function playAudioGuide() {
 
   const customAudioUrl = state.exhibitLang === 'hi' ? exhibit.audio_url_hi : exhibit.audio_url_en;
 
-  // Option A: If custom MP3/Audio file is uploaded in database
   if (customAudioUrl && customAudioUrl.trim() !== '') {
     if (state.audioElement) state.audioElement.pause();
     state.audioElement = new Audio(customAudioUrl);
@@ -448,12 +452,11 @@ function playAudioGuide() {
     return;
   }
 
-  // Option B: Native Browser Web Speech Synthesis (Speaks in Hindi or English)
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(textToRead);
-    utterance.rate = 0.9;
+    utterance.rate = 0.88; // Meditative, clear pace
     utterance.pitch = 1.0;
 
     const voices = window.speechSynthesis.getVoices();
@@ -508,9 +511,8 @@ function updateAudioUI(isPlaying) {
 
   if (isPlaying) {
     if (listenText) listenText.textContent = 'Pause Audio Guide';
-    if (listenBtn) listenBtn.className = 'flex-1 py-2.5 px-3 rounded-xl bg-slate-900 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5';
+    if (listenBtn) listenBtn.className = 'flex-1 py-2.5 px-3 rounded-xl bg-slate-900 text-white font-extrabold text-xs shadow-md flex items-center justify-center gap-1.5';
     
-    // Show Spotify-like floating mini-player on mobile
     if (miniPlayer && state.currentExhibit) {
       miniImg.src = state.currentExhibit.image_url;
       miniTitle.textContent = state.exhibitLang === 'hi' ? state.currentExhibit.title_hi : state.currentExhibit.title_en;
@@ -520,7 +522,7 @@ function updateAudioUI(isPlaying) {
     }
   } else {
     if (listenText) listenText.textContent = 'Listen Audio Guide';
-    if (listenBtn) listenBtn.className = 'flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5';
+    if (listenBtn) listenBtn.className = 'flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 text-white font-extrabold text-xs shadow-md flex items-center justify-center gap-1.5';
     
     if (miniPlayer) {
       miniPlayer.classList.add('hidden');
@@ -541,18 +543,18 @@ function renderArtGallery() {
 
   state.galleryItems.forEach(item => {
     const card = document.createElement('div');
-    card.className = 'bg-white rounded-2xl border border-amber-200/80 overflow-hidden shadow-xs';
+    card.className = 'glass-card rounded-3xl overflow-hidden';
 
     card.innerHTML = `
       <div class="h-44 overflow-hidden bg-slate-900">
         <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover">
       </div>
-      <div class="p-3.5">
-        <span class="text-2xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+      <div class="p-4 space-y-1">
+        <span class="text-2xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-900 border border-amber-500/20">
           ${item.category || 'Spiritual Art'}
         </span>
-        <h4 class="font-bold text-sm text-slate-900 mt-1.5">${item.title}</h4>
-        <p class="text-xs text-slate-500 mt-1">${item.description || ''}</p>
+        <h4 class="font-extrabold text-sm text-slate-900 mt-1">${item.title}</h4>
+        <p class="text-xs text-slate-500 leading-normal">${item.description || ''}</p>
       </div>
     `;
     grid.appendChild(card);
@@ -566,18 +568,18 @@ function renderEvents() {
 
   state.events.forEach(ev => {
     const card = document.createElement('div');
-    card.className = 'p-4 bg-white rounded-2xl border border-amber-200/80 shadow-xs space-y-2';
+    card.className = 'glass-card rounded-3xl p-4 sm:p-5 space-y-2';
 
     card.innerHTML = `
       <div class="flex items-center justify-between">
-        <span class="text-2xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Free Admission</span>
-        <span class="text-2xs text-slate-400 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${ev.time_str || ''}</span>
+        <span class="text-2xs font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-500/20">Free Admission</span>
+        <span class="text-2xs text-slate-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${ev.time_str || ''}</span>
       </div>
-      <h3 class="font-bold text-sm sm:text-base text-slate-900">${ev.title}</h3>
-      <p class="text-xs text-amber-800 font-semibold flex items-center gap-1">
-        <i data-lucide="map-pin" class="w-3 h-3"></i> ${ev.venue} &bull; ${ev.date_str}
+      <h3 class="font-extrabold text-sm sm:text-base text-slate-900 leading-snug">${ev.title}</h3>
+      <p class="text-xs text-amber-900 font-bold flex items-center gap-1">
+        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-700"></i> ${ev.venue} &bull; ${ev.date_str}
       </p>
-      <p class="text-xs text-slate-500 leading-relaxed">${ev.description || ''}</p>
+      <p class="text-xs text-slate-600 leading-relaxed">${ev.description || ''}</p>
     `;
     container.appendChild(card);
   });
@@ -608,7 +610,7 @@ function setupForms() {
         if (supabaseClient) {
           await supabaseClient.from('responses').insert([payload]);
         }
-        alert('🙏 Om Shanti! Your registration has been saved. We will contact you on WhatsApp.');
+        alert('🙏 Om Shanti! Your registration has been saved in database. We will contact you on WhatsApp.');
         evForm.reset();
       } catch (err) {
         alert('🙏 Registration recorded!');
@@ -653,9 +655,9 @@ window.adminLogout = function() {
 window.switchAdminTab = function(tabName) {
   document.querySelectorAll('.admin-tab-btn').forEach(btn => {
     if (btn.getAttribute('data-tab') === tabName) {
-      btn.className = 'admin-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-600 text-white shrink-0';
+      btn.className = 'admin-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-600 text-white shrink-0';
     } else {
-      btn.className = 'admin-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border shrink-0';
+      btn.className = 'admin-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border shrink-0';
     }
   });
 
@@ -743,15 +745,15 @@ function renderAdminExhibits() {
 
   state.exhibitions.forEach((ex, idx) => {
     const item = document.createElement('div');
-    item.className = 'p-3 rounded-xl border border-slate-200 bg-slate-50 space-y-2 text-xs';
+    item.className = 'p-3 rounded-2xl border border-slate-200 bg-white/70 space-y-2 text-xs';
 
     item.innerHTML = `
       <div class="font-bold">Exhibit ${ex.order_num || (idx + 1)}: ${ex.title_en}</div>
-      <input type="text" value="${ex.title_en}" onchange="updateExhibitField(${idx}, 'title_en', this.value)" class="w-full p-2 border rounded-lg bg-white" placeholder="Title (English)">
-      <input type="text" value="${ex.title_hi}" onchange="updateExhibitField(${idx}, 'title_hi', this.value)" class="w-full p-2 border rounded-lg bg-white" placeholder="Title (Hindi)">
-      <input type="url" value="${ex.image_url}" onchange="updateExhibitField(${idx}, 'image_url', this.value)" class="w-full p-2 border rounded-lg bg-white" placeholder="Image URL">
-      <textarea rows="2" onchange="updateExhibitField(${idx}, 'desc_en', this.value)" class="w-full p-2 border rounded-lg bg-white" placeholder="Description (English)">${ex.desc_en}</textarea>
-      <textarea rows="2" onchange="updateExhibitField(${idx}, 'desc_hi', this.value)" class="w-full p-2 border rounded-lg bg-white" placeholder="Description (Hindi)">${ex.desc_hi}</textarea>
+      <input type="text" value="${ex.title_en}" onchange="updateExhibitField(${idx}, 'title_en', this.value)" class="w-full p-2.5 border rounded-xl bg-white" placeholder="Title (English)">
+      <input type="text" value="${ex.title_hi}" onchange="updateExhibitField(${idx}, 'title_hi', this.value)" class="w-full p-2.5 border rounded-xl bg-white" placeholder="Title (Hindi)">
+      <input type="url" value="${ex.image_url}" onchange="updateExhibitField(${idx}, 'image_url', this.value)" class="w-full p-2.5 border rounded-xl bg-white" placeholder="Image URL">
+      <textarea rows="2" onchange="updateExhibitField(${idx}, 'desc_en', this.value)" class="w-full p-2.5 border rounded-xl bg-white" placeholder="Description (English)">${ex.desc_en}</textarea>
+      <textarea rows="2" onchange="updateExhibitField(${idx}, 'desc_hi', this.value)" class="w-full p-2.5 border rounded-xl bg-white" placeholder="Description (Hindi)">${ex.desc_hi}</textarea>
     `;
     container.appendChild(item);
   });
@@ -773,10 +775,10 @@ function renderAdminGallery() {
 
   state.galleryItems.forEach((item, idx) => {
     const card = document.createElement('div');
-    card.className = 'p-2 bg-slate-50 border rounded-xl flex items-center justify-between text-xs';
+    card.className = 'p-2.5 bg-white/70 border rounded-2xl flex items-center justify-between text-xs';
     card.innerHTML = `
       <div class="flex items-center gap-2">
-        <img src="${item.image_url}" class="w-10 h-10 object-cover rounded-lg">
+        <img src="${item.image_url}" class="w-10 h-10 object-cover rounded-xl">
         <span class="font-bold">${item.title}</span>
       </div>
       <button onclick="deleteGalleryItem(${idx})" class="text-red-600 font-bold">Delete</button>
@@ -803,7 +805,7 @@ function renderAdminEvents() {
 
   state.events.forEach((ev, idx) => {
     const card = document.createElement('div');
-    card.className = 'p-2 bg-slate-50 border rounded-xl flex items-center justify-between text-xs';
+    card.className = 'p-2.5 bg-white/70 border rounded-2xl flex items-center justify-between text-xs';
     card.innerHTML = `
       <div>
         <p class="font-bold">${ev.title}</p>
@@ -843,7 +845,7 @@ async function fetchAdminResponses() {
     container.innerHTML = '';
     data.forEach(r => {
       const card = document.createElement('div');
-      card.className = 'p-3 bg-slate-50 border rounded-xl text-xs space-y-1';
+      card.className = 'p-3 bg-white/70 border rounded-2xl text-xs space-y-1';
       card.innerHTML = `
         <div class="flex justify-between font-bold">
           <span>${r.name} (${r.phone || 'No phone'})</span>
