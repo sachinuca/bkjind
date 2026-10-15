@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sachin Sharma | Dynamic Showcase & Hub</title>
+  <meta name="description" content="Personal showcase powered by GitHub Pages and Supabase with dynamic media and durable response storage.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Supabase JS Client v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .dark .glass {
+      background: rgba(17, 24, 39, 0.75);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-200">
+
+  <!-- Navigation -->
+  <header class="sticky top-0 z-40 w-full glass border-b border-slate-200/80 dark:border-slate-800/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-500/20">
+          SS
+        </div>
+        <div>
+          <span class="font-bold text-lg tracking-tight">Sachin Sharma</span>
+          <span class="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium border border-emerald-500/20">
+            Live on GitHub + Supabase
+          </span>
+        </div>
+      </div>
+
+      <nav class="flex items-center gap-3 sm:gap-6">
+        <a href="#media" class="text-sm font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition">Media</a>
+        <a href="#feedback" class="text-sm font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition">Responses</a>
+        <button id="adminBtn" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 transition">
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+          <span>Manage Content</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden py-16 sm:py-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 mb-6">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+        Static Frontend + Durable Cloud Database
+      </div>
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">
+        Hosted on GitHub Pages,<br>
+        <span class="gradient-text">Dynamic Media & Real-time Storage.</span>
+      </h1>
+      <p class="max-w-2xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+        Everything you add or update—audio tracks, video players, content updates, and user responses—is stored with 100% durability in PostgreSQL via Supabase, with zero server maintenance.
+      </p>
+      
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a href="#feedback" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 transition">
+          Leave a Response
+        </a>
+        <a href="#media" class="px-6 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 font-semibold text-sm transition">
+          Browse Audio & Videos
+        </a>
+      </div>
+
+      <!-- Live Database Status Banner -->
+      <div id="dbStatusBanner" class="mt-8 max-w-md mx-auto p-3 rounded-xl text-xs font-medium flex items-center justify-center gap-2 border bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900/60 text-amber-700 dark:text-amber-300">
+        <i data-lucide="database" class="w-4 h-4 animate-pulse"></i>
+        <span id="dbStatusText">Checking Supabase connection...</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dynamic Media Section (Audio & Video) -->
+  <section id="media" class="py-12 border-t border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Audio & Video Showcase</h2>
+          <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">
+            Media links stored dynamically in Supabase. Change or add new tracks/videos anytime via the admin panel!
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="filterMedia('all')" class="media-filter-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white" data-filter="all">All</button>
+          <button onclick="filterMedia('audio')" class="media-filter-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" data-filter="audio">Audio</button>
+          <button onclick="filterMedia('video')" class="media-filter-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" data-filter="video">Video</button>
+        </div>
+      </div>
+
+      <!-- Media Grid -->
+      <div id="mediaGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered dynamically by JavaScript -->
+        <div class="col-span-full py-12 text-center text-slate-400">
+          <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2 text-indigo-500"></i>
+          Loading media...
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Durable Response Storage & Feedback Section -->
+  <section id="feedback" class="py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-3xl font-bold tracking-tight">Durable Responses & Feedback</h2>
+        <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">
+          Submit a message, rating, or inquiry. Data is durably saved straight into PostgreSQL via Supabase and immediately visible.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Submission Form (5 cols) -->
+        <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="message-square-plus" class="w-5 h-5 text-indigo-500"></i>
+            Send a Response
+          </h3>
+
+          <form id="responseForm" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Your Name</label>
+              <input type="text" id="respName" required placeholder="e.g. Alex Kumar" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Email (Optional)</label>
+              <input type="email" id="respEmail" placeholder="you@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Category</label>
+              <select id="respCategory" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="General Inquiry">General Inquiry</option>
+                <option value="Project Collaboration">Project Collaboration</option>
+                <option value="Audio / Video Feedback">Audio / Video Feedback</option>
+                <option value="Test Message">Test Message</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Rating</label>
+              <div class="flex items-center gap-2" id="ratingPicker">
+                <button type="button" data-val="1" class="star-btn text-amber-400"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
+                <button type="button" data-val="2" class="star-btn text-amber-400"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
+                <button type="button" data-val="3" class="star-btn text-amber-400"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
+                <button type="button" data-val="4" class="star-btn text-amber-400"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
+                <button type="button" data-val="5" class="star-btn text-amber-400"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
+                <span id="ratingValue" class="text-xs font-semibold ml-2 text-slate-500">5 / 5</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Your Message</label>
+              <textarea id="respMessage" rows="3" required placeholder="Write your message or inquiry here..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 transition disabled:opacity-50">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Save to Supabase</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Live Community Responses Wall (7 cols) -->
+        <div class="lg:col-span-7">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold flex items-center gap-2">
+              <i data-lucide="layers" class="w-5 h-5 text-indigo-500"></i>
+              Stored Responses Wall
+            </h3>
+            <button onclick="loadResponses()" class="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
+            </button>
+          </div>
+
+          <div id="responsesList" class="space-y-3 max-h-[550px] overflow-y-auto pr-1">
+            <!-- Dynamically populated -->
+            <div class="p-8 text-center text-slate-400">
+              Loading stored responses...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Modal (For editing Audio/Video & viewing management) -->
+  <div id="adminModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+      <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- PIN verification step -->
+      <div id="adminPinStep">
+        <h3 class="text-lg font-bold mb-2">Admin / Content Manager</h3>
+        <p class="text-xs text-slate-500 mb-4">Enter secret PIN to add or change audio, video, or content (Default PIN: <strong class="text-indigo-500">1234</strong>)</p>
+        <div class="flex gap-2">
+          <input type="password" id="adminPinInput" placeholder="Enter PIN" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+          <button onclick="verifyPin()" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold">Unlock</button>
+        </div>
+        <p id="pinError" class="text-xs text-rose-500 mt-2 hidden">Incorrect PIN! Try 1234</p>
+      </div>
+
+      <!-- Admin Actions step -->
+      <div id="adminActionsStep" class="hidden">
+        <h3 class="text-lg font-bold mb-4">Add Audio / Video Item</h3>
+        
+        <form id="addMediaForm" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Type</label>
+            <select id="newMediaType" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+              <option value="audio">Audio File (MP3 / Stream)</option>
+              <option value="video">Video (YouTube Embed or MP4)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Title</label>
+            <input type="text" id="newMediaTitle" required placeholder="e.g. My Podcast Episode 1" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Media URL</label>
+            <input type="url" id="newMediaUrl" required placeholder="https://... (mp3 link or YouTube URL)" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Description (Optional)</label>
+            <textarea id="newMediaDesc" rows="2" placeholder="Brief note about this track or video" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm"></textarea>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" onclick="closeAdminModal()" class="px-4 py-2 border rounded-xl text-sm">Cancel</button>
+            <button type="submit" id="saveMediaBtn" class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold flex items-center gap-1.5">
+              <i data-lucide="plus" class="w-4 h-4"></i> Save Media
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-8 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500">
+    <p>© <span id="currentYear"></span> Sachin Sharma. Hosted on <a href="https://pages.github.com" target="_blank" class="text-indigo-500 underline">GitHub Pages</a> &bull; Database on <a href="https://supabase.com" target="_blank" class="text-indigo-500 underline">Supabase PostgreSQL</a>.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
